@@ -32,6 +32,10 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Commit types
+
+feat fix docs style refactor perf test chore revert build ci
+
 ## License
 
 Nest is [MIT licensed](LICENSE).
