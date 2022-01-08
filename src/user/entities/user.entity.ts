@@ -37,4 +37,8 @@ export class User extends CommonEntity {
   async hashPassword(): Promise<void> {
     this.password = await argon2.hash(this.password, { hashLength: 16 });
   }
+
+  async comparePassword(password: string): Promise<boolean> {
+    return await argon2.verify(this.password, password);
+  }
 }

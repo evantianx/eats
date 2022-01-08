@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserInput } from './dtos/createUser.dto';
+import { LoginUserInput, LoginUserOutput } from './dtos/loginUser.dto';
+import { RegisterUserInput, RegisterUserOutput } from './dtos/registerUser.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
@@ -10,11 +11,11 @@ export class UserService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  async createUser({
+  async registerUser({
     email,
     password,
     role,
-  }: CreateUserInput): Promise<{ ok: boolean; error: string }> {
+  }: RegisterUserInput): Promise<RegisterUserOutput> {
     try {
       const user = await this.userRepository.findOne({ email });
       if (user) {
@@ -25,7 +26,26 @@ export class UserService {
       );
       return { ok: true, error: '' };
     } catch (error) {
-      return { ok: false, error: error.message };
+      return { ok: false, error: "Couldn't register user" };
+    }
+  }
+
+  async loginUser({
+    email,
+    password,
+  }: LoginUserInput): Promise<LoginUserOutput> {
+    try {
+      const user = await this.userRepository.findOne({ email });
+      if (!user) {
+        return { ok: false, error: 'User does not exist' };
+      }
+      const passwordMatch = await user.comparePassword(password);
+      if (!passwordMatch) {
+        return { ok: false, error: 'Password is incorrect' };
+      }
+      return { ok: true, error: '', token: '' };
+    } catch (error) {
+      return { ok: false, error: "Couldn't login user" };
     }
   }
 }
