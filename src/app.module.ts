@@ -2,8 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { configuration } from '../config/configuration';
 import { CommonModule } from './common/common.module';
+import { configuration } from './config/configuration';
+import { JwtModule } from './jwt/jwt.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -15,6 +16,9 @@ import { UserModule } from './user/user.module';
     TypeOrmModule.forRoot(),
     UserModule,
     CommonModule,
+    JwtModule.forRoot({
+      secret: process.env.JWT_SECRET,
+    }),
   ],
   controllers: [],
   providers: [],

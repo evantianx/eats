@@ -15,5 +15,6 @@ export const configuration: ConfigModuleOptions = {
     TYPEORM_PORT: Joi.number().required(), // Joi is not able to validate port as number (it's string)
     TYPEORM_SYNCHRONIZE: Joi.boolean().required(),
     TYPEORM_LOGGING: Joi.boolean().required(),
+    JWT_SECRET: Joi.string().required(),
   }),
 } as const;
