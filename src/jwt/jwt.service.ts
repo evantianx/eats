@@ -9,7 +9,11 @@ export class JwtService {
     @Inject(JWTMODULEOPTIONS) private readonly options: JwtModuleOptions,
   ) {}
 
-  async sign(payload: { id: number }): Promise<string> {
+  sign(payload: { id: number }): string {
     return jwt.sign(payload, this.options.secret);
+  }
+
+  verify(token: string) {
+    return jwt.verify(token, this.options.secret);
   }
 }

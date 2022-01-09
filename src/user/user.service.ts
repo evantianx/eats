@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '../jwt/jwt.service';
@@ -49,6 +49,14 @@ export class UserService {
       return { ok: true, error: '', token };
     } catch (error) {
       return { ok: false, error: "Couldn't login user" };
+    }
+  }
+
+  findUserById(id: number): Promise<User> {
+    try {
+      return this.userRepository.findOne(id);
+    } catch (e) {
+      throw new NotFoundException(e);
     }
   }
 }
