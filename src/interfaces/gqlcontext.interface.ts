@@ -1,5 +1,5 @@
 import { User } from '../user/entities/user.entity';
 
-export interface GQLContext {
+export interface GqlContext {
   me: User;
 }

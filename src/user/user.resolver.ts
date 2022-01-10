@@ -1,7 +1,7 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthGuard } from '../auth/auth.guard';
-import { GQLContext } from '../interfaces/context.interface';
+import { AuthUser } from '../auth/authUser.decorator';
 import { LoginUserInput, LoginUserOutput } from './dtos/loginUser.dto';
 import { RegisterUserInput, RegisterUserOutput } from './dtos/registerUser.dto';
 import { User } from './entities/user.entity';
@@ -10,11 +10,6 @@ import { UserService } from './user.service';
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
-
-  @Query(() => Boolean)
-  hello() {
-    return true;
-  }
 
   @Mutation(() => RegisterUserOutput)
   registerUser(
@@ -30,7 +25,7 @@ export class UserResolver {
 
   @Query(() => User)
   @UseGuards(AuthGuard)
-  me(@Context() context: GQLContext): User {
-    return context.me;
+  getMe(@AuthUser() me: User): User {
+    return me;
   }
 }

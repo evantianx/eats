@@ -3,9 +3,7 @@ import { JwtModuleOptions } from './interfaces/jwtModuleOptions.interface';
 import { JWTMODULEOPTIONS } from './jwt.constants';
 import { JwtService } from './jwt.service';
 
-@Module({
-  providers: [JwtService],
-})
+@Module({})
 @Global()
 export class JwtModule {
   static forRoot(options: JwtModuleOptions): DynamicModule {

@@ -1,4 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import { JwtModuleOptions } from './interfaces/jwtModuleOptions.interface';
 import { JWTMODULEOPTIONS } from './jwt.constants';
@@ -10,10 +15,20 @@ export class JwtService {
   ) {}
 
   sign(payload: { id: number }): string {
-    return jwt.sign(payload, this.options.secret);
+    try {
+      return jwt.sign(payload, this.options.secret, {
+        expiresIn: this.options.expiresIn,
+      });
+    } catch (e) {
+      throw new InternalServerErrorException(e);
+    }
   }
 
   verify(token: string) {
-    return jwt.verify(token, this.options.secret);
+    try {
+      return jwt.verify(token, this.options.secret);
+    } catch (e) {
+      throw new HttpException('Invalid token', 401);
+    }
   }
 }
