@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '../jwt/jwt.service';
+import { EditUserInput, EditUserOutput } from './dtos/editUser.dto';
 import { GetUserOutput } from './dtos/getUser.dto';
 import { LoginUserInput, LoginUserOutput } from './dtos/loginUser.dto';
 import { RegisterUserInput, RegisterUserOutput } from './dtos/registerUser.dto';
@@ -49,6 +50,7 @@ export class UserService {
       const token = await this.jwtService.sign({ id: user.id });
       return { ok: true, error: '', token };
     } catch (error) {
+      console.log(error);
       return { ok: false, error: "Couldn't login user" };
     }
   }
@@ -62,6 +64,23 @@ export class UserService {
       return { ok: true, error: '', user };
     } catch (e) {
       return { ok: false, error: `Couldn\'t find user with id ${id}` };
+    }
+  }
+
+  async editUser(
+    id: number,
+    { email, password }: EditUserInput,
+  ): Promise<EditUserOutput> {
+    // `this.userRepository.update(id, { email, password })` won't trigger
+    // the update event, so we need to use `this.userRepository.save()`
+    try {
+      const user = await this.userRepository.findOne(id);
+      if (email) user.email = email;
+      if (password) user.password = password;
+      await this.userRepository.save(user);
+      return { ok: true, error: '' };
+    } catch (e) {
+      return { ok: false, error: `Couldn\'t edit user with id ${id}` };
     }
   }
 }

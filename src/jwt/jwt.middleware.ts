@@ -1,4 +1,4 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware, NotFoundException } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { UserService } from '../user/user.service';
 import { JwtService } from './jwt.service';
@@ -20,9 +20,11 @@ export class JwtMiddleware implements NestMiddleware {
     }
     const payload = this.jwtService.verify(token) as Record<string, unknown>;
     if (payload?.id) {
-      const user = await this.userService.findUserById(payload.id as number);
-      req['me'] = user;
-      return next();
+      const { ok, error, user } = await this.userService.findUserById(
+        payload.id as number,
+      );
+      if (ok && user) req['me'] = user;
+      if (error) return next(new NotFoundException());
     }
     return next();
   }
