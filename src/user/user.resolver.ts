@@ -2,6 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthUser } from '../auth/authUser.decorator';
+import { GetUserInput, GetUserOutput } from './dtos/getUser.dto';
 import { LoginUserInput, LoginUserOutput } from './dtos/loginUser.dto';
 import { RegisterUserInput, RegisterUserOutput } from './dtos/registerUser.dto';
 import { User } from './entities/user.entity';
@@ -27,5 +28,11 @@ export class UserResolver {
   @UseGuards(AuthGuard)
   getMe(@AuthUser() me: User): User {
     return me;
+  }
+
+  @Query(() => GetUserOutput)
+  @UseGuards(AuthGuard)
+  getUser(@Args() { id }: GetUserInput): Promise<GetUserOutput> {
+    return this.userService.findUserById(id);
   }
 }

@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '../jwt/jwt.service';
+import { GetUserOutput } from './dtos/getUser.dto';
 import { LoginUserInput, LoginUserOutput } from './dtos/loginUser.dto';
 import { RegisterUserInput, RegisterUserOutput } from './dtos/registerUser.dto';
 import { User } from './entities/user.entity';
@@ -52,11 +53,15 @@ export class UserService {
     }
   }
 
-  findUserById(id: number): Promise<User> {
+  async findUserById(id: number): Promise<GetUserOutput> {
     try {
-      return this.userRepository.findOne(id);
+      const user = await this.userRepository.findOne(id);
+      if (!user) {
+        return { ok: false, error: 'User does not exist' };
+      }
+      return { ok: true, error: '', user };
     } catch (e) {
-      throw new NotFoundException(e);
+      return { ok: false, error: `Couldn\'t find user with id ${id}` };
     }
   }
 }
