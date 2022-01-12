@@ -46,7 +46,10 @@ export class UserService {
     password,
   }: LoginUserInput): Promise<LoginUserOutput> {
     try {
-      const user = await this.userRepository.findOne({ email });
+      const user = await this.userRepository.findOne(
+        { email },
+        { select: ['password', 'id'] },
+      );
       if (!user) {
         return { ok: false, error: 'User does not exist' };
       }
@@ -59,18 +62,6 @@ export class UserService {
     } catch (error) {
       console.log(error);
       return { ok: false, error: "Couldn't login user" };
-    }
-  }
-
-  async findUserById(id: number): Promise<GetUserOutput> {
-    try {
-      const user = await this.userRepository.findOne(id);
-      if (!user) {
-        return { ok: false, error: 'User does not exist' };
-      }
-      return { ok: true, error: '', user };
-    } catch (e) {
-      return { ok: false, error: `Couldn\'t find user with id ${id}` };
     }
   }
 
@@ -94,6 +85,35 @@ export class UserService {
       return { ok: true, error: '' };
     } catch (e) {
       return { ok: false, error: `Couldn\'t edit user with id ${id}` };
+    }
+  }
+
+  async verifyUser(code: string): Promise<GetUserOutput> {
+    try {
+      const verification = await this.verificationRepository.findOne(
+        { code },
+        { relations: ['user'] },
+      );
+      if (verification) {
+        const verifyingUser = verification.user;
+        verifyingUser.verified = true;
+        await this.userRepository.save(verifyingUser);
+        return { ok: true, error: '' };
+      }
+    } catch (e) {
+      return { ok: false, error: "Couldn't verify user" };
+    }
+  }
+
+  async findUserById(id: number): Promise<GetUserOutput> {
+    try {
+      const user = await this.userRepository.findOne(id);
+      if (!user) {
+        return { ok: false, error: 'User does not exist' };
+      }
+      return { ok: true, error: '', user };
+    } catch (e) {
+      return { ok: false, error: `Couldn\'t find user with id ${id}` };
     }
   }
 }

@@ -6,6 +6,7 @@ import { EditUserInput, EditUserOutput } from './dtos/editUser.dto';
 import { GetUserInput, GetUserOutput } from './dtos/getUser.dto';
 import { LoginUserInput, LoginUserOutput } from './dtos/loginUser.dto';
 import { RegisterUserInput, RegisterUserOutput } from './dtos/registerUser.dto';
+import { VerifyUserInput, VerifyUserOutput } from './dtos/verifyUser.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
@@ -45,5 +46,12 @@ export class UserResolver {
     input: EditUserInput,
   ): Promise<EditUserOutput> {
     return this.userService.editUser(id, input);
+  }
+
+  @Mutation(() => VerifyUserOutput)
+  verifyUser(
+    @Args('input') { code }: VerifyUserInput,
+  ): Promise<VerifyUserOutput> {
+    return this.userService.verifyUser(code);
   }
 }

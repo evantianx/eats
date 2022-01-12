@@ -26,7 +26,7 @@ export class User extends CommonEntity {
   @IsEmail()
   email: string;
 
-  @Column()
+  @Column({ select: false })
   @Field(() => String)
   @IsString()
   @Length(8, 20)
@@ -44,8 +44,9 @@ export class User extends CommonEntity {
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword(): Promise<void> {
-    console.log('hashing password: ', this.password);
-    this.password = await argon2.hash(this.password, { hashLength: 16 });
+    if (this.password) {
+      this.password = await argon2.hash(this.password, { hashLength: 16 });
+    }
   }
 
   async comparePassword(password: string): Promise<boolean> {
