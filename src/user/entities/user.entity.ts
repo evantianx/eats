@@ -37,9 +37,14 @@ export class User extends CommonEntity {
   @IsEnum(UserRole)
   role: UserRole;
 
+  @Column({ default: false })
+  @Field(() => Boolean, { defaultValue: false })
+  verified: boolean;
+
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword(): Promise<void> {
+    console.log('hashing password: ', this.password);
     this.password = await argon2.hash(this.password, { hashLength: 16 });
   }
 
