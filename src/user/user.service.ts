@@ -6,6 +6,7 @@ import { EditUserInput, EditUserOutput } from './dtos/editUser.dto';
 import { GetUserOutput } from './dtos/getUser.dto';
 import { LoginUserInput, LoginUserOutput } from './dtos/loginUser.dto';
 import { RegisterUserInput, RegisterUserOutput } from './dtos/registerUser.dto';
+import { VerifyUserOutput } from './dtos/verifyUser.dto';
 import { User } from './entities/user.entity';
 import { Verification } from './entities/verification.entity';
 
@@ -88,7 +89,7 @@ export class UserService {
     }
   }
 
-  async verifyUser(code: string): Promise<GetUserOutput> {
+  async verifyUser(code: string): Promise<VerifyUserOutput> {
     try {
       const verification = await this.verificationRepository.findOne(
         { code },
