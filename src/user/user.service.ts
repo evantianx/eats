@@ -99,6 +99,7 @@ export class UserService {
         const verifyingUser = verification.user;
         verifyingUser.verified = true;
         await this.userRepository.save(verifyingUser);
+        await this.verificationRepository.delete(verification.id);
         return { ok: true, error: '' };
       }
     } catch (e) {
